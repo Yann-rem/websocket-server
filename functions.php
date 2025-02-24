@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Effectue la poignée de main WebSocket avec un client.
+ * 
+ * Cette fonction analyse la requête HTTP envoyée par le client, extrait la clé WebSocket,
+ * génère une clé d'acceptation et envoie la réponse HTTP nécessaire pour établir
+ * la connexion WebSocket.
+ * 
+ * @param Socket $client_socket Socket du client WebSocket.
+ * @param string $request       Requête HTTP de connexion WebSocket envoyée par le client.
+ * @return void
+ */
 function perform_handshake(Socket $client_socket, string $request): void
 {
     // Récupération de la clé WebSocket envoyée par le client
@@ -20,6 +31,25 @@ function perform_handshake(Socket $client_socket, string $request): void
     }
 }
 
+/**
+ * Fonction pour encoder un message avec un masque de sécurité
+ * 
+ * Cette fonction est utilisée pour encoder un message à envoyer via WebSocket.
+ * Le message est masqué selon les règles du protocole WebSocket, où un en-tête est ajouté
+ * avant le texte et le texte est encodé avec un masque de sécurité.
+ * 
+ * L'en-tête contient les informations suivantes :
+ * - Le premier octet (0x81) indique qu'il s'agit d'un message texte avec un masque appliqué.
+ * - La longueur du message est encodée selon différentes tailles en fonction de la longueur réelle du texte.
+ * 
+ * Les longueurs possibles sont :
+ * - Si la longueur est inférieure ou égale à 125, la longueur est codée sur un octet.
+ * - Si la longueur est supérieure à 125 mais inférieure à 65536, elle est codée sur 2 octets.
+ * - Si la longueur est supérieure à 65535, elle est codée sur 8 octets.
+ * 
+ * @param string $text Message texte à encoder.
+ * @return string      Message encodé avec un en-tête et le texte masqué.
+ */
 function encode(string $text): string
 {
     $b1 = 0x81;
@@ -37,6 +67,16 @@ function encode(string $text): string
     return $header . $text;
 }
 
+/**
+ * Fonction pour décoder un message WebSocket masqué
+ * 
+ * Cette fonction est utilisée pour décoder un message WebSocket qui a été masqué selon les règles du protocole WebSocket.
+ * Le message est d'abord extrait de la chaîne binaire, puis les octets sont décodés en utilisant le masque de sécurité
+ * fourni dans l'en-tête du message.
+ * 
+ * @param string $payload Message WebSocket masqué sous forme binaire.
+ * @return string         Message texte décodé.
+ */
 function decode(string $payload): string
 {
     $length = ord($payload[1]) & 127;
