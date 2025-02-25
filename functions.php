@@ -11,7 +11,7 @@
  * @param string $request       Requête HTTP de connexion WebSocket envoyée par le client.
  * @return void
  */
-function perform_handshake(Socket $client_socket, string $request): void
+function handshake(Socket $client_socket, string $request): void
 {
     // Récupération de la clé WebSocket envoyée par le client
     if (preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $request, $matches)) {
