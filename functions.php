@@ -116,3 +116,27 @@ function log_event(string $message, string $type = 'info'): void
     // Ajoute le message au fichier log, sans écraser les précédents
     file_put_contents($logFile, $logMessage, FILE_APPEND);
 }
+
+/**
+ * Fonction pour diffuser un message WebSocket à tous les clients connectés, sauf l'expéditeur.
+ * 
+ * Cette fonction encode le message selon le protocole WebSocket et l'envoie à tous
+ * les clients actifs, à l'exception de celui qui l'a envoyé.
+ * 
+ * @param string     $message  Message à diffuser aux autres clients.
+ * @param mixed      $sender   Socket du client expéditeur du message.
+ * @param array      $clients  Tableau des sockets des clients connectés.
+ * 
+ * @return void
+ */
+function broadcast_message(string $message, mixed $sender, array $clients): void
+
+{
+    $encoded_message = encode($message);
+
+    foreach ($clients as $client) {
+        if ($client !== $sender) {
+            socket_write($client, $encoded_message);
+        }
+    }
+}
