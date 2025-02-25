@@ -99,3 +99,20 @@ function decode(string $payload): string
 
     return $decoded;
 }
+
+/**
+ * Fonction pour enregistrer un événement dans un fichier de Log.
+ * 
+ * @param string $message Message à enregistrer dans le Log.
+ * @param string $type    Type d'événement.
+ * @return void 
+ */
+function log_event(string $message, string $type = 'info'): void
+{
+    $logFile = __DIR__ . "/server.log";
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[" . $timestamp . "] [" . $type . "]" . $message . "\n";
+
+    // Ajoute le message au fichier log, sans écraser les précédents
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
+}
