@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  text-align: center;
+}
+
+.messages {
+  margin: 20px auto;
+  padding: 10px;
+  width: 80%;
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+input,
+button {
+  margin: 5px;
+  padding: 10px;
+}
